@@ -56,7 +56,7 @@ public class Suraimu extends AdvancedRobot
 		}
 			turnRight(90);
 		while(true) {
-				//nearWall() ;
+				nearWall() ;
 				setTurnRadarRight(360);
 				waitFor(new RadarTurnCompleteCondition(this));
 				setTurnRadarLeft(360);
@@ -128,7 +128,7 @@ public class Suraimu extends AdvancedRobot
 			
 				setTurnRight(90);
 				setAhead(70 * direction) ;
-				//waitFor(new TurnCompleteCondition(this));
+			
 			}
 						
 
@@ -361,10 +361,67 @@ public class Suraimu extends AdvancedRobot
 		//waitFor(new TurnCompleteCondition(this));
 	}	
 	
-	public void nearWall(){
+public void nearWall(){
 
 		int wallDistance = 100 ;
 		
+		if(direction == 1){
+			
+			if(getX() < wallDistance && 180 < getHeading()){
+				
+				if(getY() < getBattleFieldHeight() / 2){
+					
+					setTurnRight(360 - getHeading());
+					setAhead(70 * direction);
+				}
+				else{
+					
+					setTurnRight(180 - getHeading());
+					setAhead(70 * direction);
+				}
+			}
+			if(getBattleFieldWidth() - wallDistance < getX() && getHeading() < 180){
+				
+				if(getY() < getBattleFieldHeight() / 2){
+					
+					setTurnRight(-getHeading());
+					setAhead(70 * direction);
+				}
+				else{
+					
+					setTurnRight(getHeading());
+					setAhead(70 * direction);
+				}
+			}
+			if(getY() < wallDistance && 90 < getHeading() && getHeading() < 270){
+				
+				if(getX() < getBattleFieldWidth() / 2){
+					
+					setTurnRight(90 - getHeading());
+					setAhead(70 * direction);
+				}
+				else{
+					
+					setTurnRight(270 - getHeading());
+					setAhead(70 * direction);
+				}
+			}
+			if(getBattleFieldHeight() - wallDistance < getY() && 90 > getHeading() || getHeading() > 270){
+				
+				if(getX() < getBattleFieldWidth() / 2){
+					
+					setTurnRight(getHeading() - );
+					setAhead(70 * direction);
+				}
+				else{
+					
+					setTurnRight(270 - getHeading());
+					setAhead(70 * direction);
+				}
+			}
+				
+		}
+	/*	
 		if(0 <= getX() && getX() <= getBattleFieldWidth()/2 && 0 <= getY() && getY() <= getBattleFieldWidth()/2){
 			
 			if(wallDistance > getX() ){
@@ -373,20 +430,29 @@ public class Suraimu extends AdvancedRobot
 					
 					setTurnRight(getHeading() - 180);
 				}
+				else{
+					
+					setTurnRight(180 - getHeading()) ;
+				}
+			}
+			
+			if(wallDistance > getY()){
+				
+				if(0 <= getHeading() && getHeading() <= 180){
+					
+					setTurnRight(90 - getHeading());
+				}
+				else{
+					
+					setTurnRight(270 - getHeading());
+				}
 			}
 		}		
+		
+		if(0 <= getX() && getX() <= getBattleFieldWidth()/2 &&  getBattleFieldWidth()/2 <= getY() && getY() <= ge){
+			 
 
-			
-			else if(getBattleFieldWidth() - wallDistance < getX() ){
-			
-			}
-			
-			if(wallDistance > getY()) {
-				
-			}
-			else if(getBattleFieldHeight() - wallDistance < getY() ){
-				
-			}
+		}*/
 	}
 	
 	public void onHitByBullet(HitByBulletEvent e) {
