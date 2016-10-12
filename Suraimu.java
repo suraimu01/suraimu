@@ -23,6 +23,7 @@ public class Suraimu extends AdvancedRobot
 	private boolean removeComp = true;
 	
 	private int direction = 1 ;
+	private int trunIndex = 1 ;
 
 	public void run() {
 
@@ -47,12 +48,12 @@ public class Suraimu extends AdvancedRobot
 		if(getX() <= (getBattleFieldWidth() / 2)){
 		
 			turnLeft(normalRelativeAngle(getHeading() + 90)) ;
-			ahead(getX()-30);
+			ahead(getX()-100);
 		}
 		else{
 		
 			turnLeft(normalRelativeAngle(getHeading() - 90)) ;
-			ahead(getBattleFieldWidth() - getX() -30);
+			ahead(getBattleFieldWidth() - getX() -100);
 		}
 			turnRight(90);
 		while(true) {
@@ -124,12 +125,14 @@ public class Suraimu extends AdvancedRobot
 			
 			//setTurnRight(normalRelativeAngle(e.getBearing() + 90)) ;
 			//out.println(e.getBearing());
-			if((-15 <= e.getBearing() &&  e.getBearing() <= 15) || (165 <= e.getBearing() ||  e.getBearing() <= -165)){
-			
-				setTurnRight(90);
+	/*		if((-15 <= e.getBearing() &&  e.getBearing() <= 15) || (165 <= e.getBearing() ||  e.getBearing() <= -165)){
+							
+
+				setTurnRight(90 * trunIndex);
+				trunIndex *= -1 ;
 				setAhead(70 * direction) ;
 			
-			}
+			}*/
 						
 
 			if((data.getPrvEnergy() != data.getEnergy()) && new MoveCompleteCondition(this).test()){		
@@ -363,12 +366,12 @@ public class Suraimu extends AdvancedRobot
 	
 public void nearWall(){
 
-		int wallDistance = 100 ;
+		int wallDistance = 200 ;
 		
 		if(direction == 1){
 			
 			if(getX() < wallDistance && 180 < getHeading()){
-				
+				out.println("xl");
 				if(getY() < getBattleFieldHeight() / 2){
 					
 					setTurnRight(360 - getHeading());
@@ -381,7 +384,7 @@ public void nearWall(){
 				}
 			}
 			if(getBattleFieldWidth() - wallDistance < getX() && getHeading() < 180){
-				
+				out.println("xr");
 				if(getY() < getBattleFieldHeight() / 2){
 					
 					setTurnRight(-getHeading());
@@ -394,7 +397,7 @@ public void nearWall(){
 				}
 			}
 			if(getY() < wallDistance && 90 < getHeading() && getHeading() < 270){
-				
+				out.println("ys");
 				if(getX() < getBattleFieldWidth() / 2){
 					
 					setTurnRight(90 - getHeading());
@@ -406,16 +409,73 @@ public void nearWall(){
 					setAhead(70 * direction);
 				}
 			}
-			if(getBattleFieldHeight() - wallDistance < getY() && 90 > getHeading() || getHeading() > 270){
-				
+			if(getBattleFieldHeight() - wallDistance < getY() &&( 90 > getHeading() || getHeading() > 270)){
+				out.println("yu");
 				if(getX() < getBattleFieldWidth() / 2){
 					
-					setTurnRight(getHeading() - );
+					setTurnRight(normalAbsoluteAngle(450 - getHeading()));
 					setAhead(70 * direction);
 				}
 				else{
 					
+					setTurnRight(normalRelativeAngle(-90 - getHeading()));
+					setAhead(70 * direction);
+				}
+			}
+				
+		}
+		
+		else{
+			
+			if(getX() < wallDistance && 180 > getHeading()){
+				out.println("xl");
+				if(getY() < getBattleFieldHeight() / 2){
+					
+					setTurnRight(180 - getHeading());
+					setAhead(70 * direction);
+				}
+				else{
+					
+					setTurnRight( -getHeading());
+					setAhead(70 * direction);
+				}
+			}
+			if(getBattleFieldWidth() - wallDistance < getX() && getHeading() > 180){
+				out.println("xr");
+				if(getY() < getBattleFieldHeight() / 2){
+					
+					setTurnRight(180 - getHeading());
+					setAhead(70 * direction);
+				}
+				else{
+					
+					setTurnRight(360 - getHeading());
+					setAhead(70 * direction);
+				}
+			}
+			if(getY() < wallDistance && ( 90 > getHeading() || getHeading() > 270)){
+				out.println("ys");
+				if(getX() < getBattleFieldWidth() / 2){
+					
+					setTurnRight(normalRelativeAngle(-90 - getHeading()));
+					setAhead(70 * direction);
+				}
+				else{
+					
+					setTurnRight(normalAbsoluteAngle(450 - getHeading()));
+					setAhead(70 * direction);
+				}
+			}
+			if(getBattleFieldHeight() - wallDistance < getY() && 90 < getHeading() && getHeading() < 270){
+				out.println("yu");
+				if(getX() < getBattleFieldWidth() / 2){
+					
 					setTurnRight(270 - getHeading());
+					setAhead(70 * direction);
+				}
+				else{
+					
+					setTurnRight(90 - getHeading());
 					setAhead(70 * direction);
 				}
 			}
