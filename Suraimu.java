@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.awt.Color;
 
+
+
 public class Suraimu extends AdvancedRobot
 {
 //	private LinkedList<TankData> list = new LinkedList<TankData>();
@@ -44,7 +46,7 @@ public class Suraimu extends AdvancedRobot
 				};
 			}
 		);
-
+/*
 		if(getX() <= (getBattleFieldWidth() / 2)){
 		
 			turnLeft(normalRelativeAngle(getHeading() + 90)) ;
@@ -55,9 +57,9 @@ public class Suraimu extends AdvancedRobot
 			turnLeft(normalRelativeAngle(getHeading() - 90)) ;
 			ahead(getBattleFieldWidth() - getX() -100);
 		}
-			turnRight(90);
+			turnRight(90);*/
 		while(true) {
-				nearWall() ;
+				//nearWall() ;
 				setTurnRadarRight(360);
 				waitFor(new RadarTurnCompleteCondition(this));
 				setTurnRadarLeft(360);
@@ -80,7 +82,7 @@ public class Suraimu extends AdvancedRobot
 			data = new TankData() ;
 			
 			data.setName(e.getName());
-			data.setData(e.getVelocity(),e.getHeading(),e.getDistance(),e.getEnergy() );
+			data.setData(e.getVelocity(),e.getHeading(),e.getBearing(),e.getDistance(),e.getEnergy() );
 			
 			list.add(data);	
 			
@@ -97,9 +99,9 @@ public class Suraimu extends AdvancedRobot
 						
 						listIndex = c ;
 
-						data.setPrvData(d.getVelocity(),d.getHeading(),d.getDistance(),d.getEnergy());
+						data.setPrvData(d.getVelocity(),d.getHeading(),d.getBearing(),d.getDistance(),d.getEnergy());
 	
-						data.setData(e.getVelocity(),e.getHeading(),e.getDistance(),e.getEnergy());
+						data.setData(e.getVelocity(),e.getHeading(),e.getBearing(),e.getDistance(),e.getEnergy());
 						
 				}
 				
@@ -111,7 +113,7 @@ public class Suraimu extends AdvancedRobot
 				data = new TankData() ;
 				
 				data.setName(e.getName());
-				data.setData(e.getVelocity(),e.getHeading(),e.getDistance(),e.getEnergy());	
+				data.setData(e.getVelocity(),e.getHeading(),e.getBearing(),e.getDistance(),e.getEnergy());	
 				
 				list.add(data);	
 				
@@ -133,12 +135,14 @@ public class Suraimu extends AdvancedRobot
 				setAhead(70 * direction) ;
 			
 			}*/
-						
+			
+			antiGravity();
+			
 
 			if((data.getPrvEnergy() != data.getEnergy()) && new MoveCompleteCondition(this).test()){		
 
-				setAhead(70 * direction) ;
-			/*	//nearWall() ;
+			/*	setAhead(70 * direction) ;
+				//nearWall() ;
 				if(getX() >= (getBattleFieldWidth() / 2)  ){
 				
 					if(getY() <= 150)
@@ -340,9 +344,50 @@ public class Suraimu extends AdvancedRobot
 		if(e.getName().equals(targetName)) targetName = null ;
 	}
 	
-	/**
-	 * onHitWall: What to do when you hit a wall
-	 */
+	public void antiGravity(){
+	
+		double antiX = 0;
+		double antiY = 0;
+		
+		double forceX = 0 ;
+		double forceY = 0;
+		
+		for(TankData d : list){
+			
+			antiX = -(Math.sin(Math.toRadians(normalRelativeAngle(getHeading() + d.getBearing())))* d.getDistance()) ;
+			
+			antiY = -(Math.cos(Math.toRadians(normalRelativeAngle(getHeading() + d.getBearing())))* d.getDistance());
+			
+			forceX += antiX * (1000 / (d.getDistance() * d.getDistance()));
+			forceY += antiY * (1000 / (d.getDistance() * d.getDistance()));
+
+		}
+		
+		//wall L -> R -> D -> U
+		
+		forceX += getX() * ( 10000 / (getX() * getX() * getX()));
+	
+		forceX += -(getBattleFieldWidth() - getX()) * (10000 / Math.pow((getBattleFieldWidth() - getX()),3));
+		
+		forceY += getY() * ( 10000 / (getY() * getY() * getY()));
+		
+		forceY += -(getBattleFieldHeight() - getY()) * (10000 / Math.pow((getBattleFieldHeight() - getY()),3));
+		
+		double antiAngle = Math.toDegrees(Math.atan(forceX / forceY));
+			out.println(forceX+","+forceY +","+antiAngle);
+		if(!Double.isNaN(antiAngle)){
+			if(forceY >= 0){
+				direction = 1;
+				setTurnRight(normalRelativeAngle(antiAngle - getHeading()));
+			}
+			else{
+				direction = -1;
+				setTurnRight(normalRelativeAngle( - getHeading() + antiAngle));
+			}
+		}
+		setAhead(30 * direction) ;
+	}	
+
 	public void onHitWall(HitWallEvent e) {
 		// Replace the next line with any behavior you would like
 		//clearAllEvents() ;
@@ -366,11 +411,11 @@ public class Suraimu extends AdvancedRobot
 	
 public void nearWall(){
 
-		int wallDistance = 200 ;
+		int wallDistance = 170 ;
 		
 		if(direction == 1){
 			
-			if(getX() < wallDistance && 180 < getHeading()){
+			if(getX() < wallDistance && 181 < getHeading()){
 				out.println("xl");
 				if(getY() < getBattleFieldHeight() / 2){
 					
